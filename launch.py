@@ -100,12 +100,12 @@ def open_browser():
 
 def main():
     """Fonction principale"""
-    print("🚀 LANCEMENT DU BOT DISCORD + DASHBOARD")
-    print("=" * 50)
+    print("🚀 LANCEMENT DU BOT DISCORD + DASHBOARD MODERNE")
+    print("=" * 55)
     print(f"🖥️  Système: {platform.system()} {platform.release()}")
     print(f"🐍 Python: {sys.version.split()[0]}")
     print(f"📁 Répertoire: {Path.cwd()}")
-    print("=" * 50)
+    print("=" * 55)
     
     # Vérifier et installer les dépendances
     if not install_requirements():
@@ -132,16 +132,20 @@ def main():
     
     time.sleep(2)
     print("✅ Serveur web: http://localhost:5000")
-    print("📊 Dashboard disponible dans votre navigateur")
-    print("-" * 30)
+    print("📊 Interface moderne disponible dans votre navigateur")
+    print("🎨 Design entièrement recodé avec fonctionnalités complètes")
+    print("-" * 35)
     
     if has_token:
         print("🤖 Démarrage du bot Discord...")
-        print("📝 Les logs apparaîtront sur le dashboard")
-        print("\n💡 Conseils:")
-        print("  - Activez les intentions privilégiées sur Discord Developer Portal")
-        print("  - Invitez le bot sur votre serveur avec les bonnes permissions")
-        print("  - Utilisez les commandes avec le préfixe +")
+        print("📝 Les logs apparaîtront sur l'interface web")
+        print("🎮 Vous pouvez maintenant contrôler le bot depuis le site!")
+        print("\n💡 Nouvelles fonctionnalités:")
+        print("  - Interface web moderne et responsive")
+        print("  - Contrôle du bot directement depuis le site")
+        print("  - Graphiques et statistiques en temps réel")
+        print("  - Gestion des utilisateurs et des serveurs")
+        print("  - Historique des commandes")
         print("\n🛑 Appuyez sur Ctrl+C pour arrêter\n")
         
         try:

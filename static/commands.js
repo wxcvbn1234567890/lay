@@ -55,26 +55,26 @@ async function loadCommandHistory() {
         const container = document.getElementById('command-history');
         
         if (!history || history.length === 0) {
-            container.innerHTML = '<div class=\"empty-state\"><i class=\"fas fa-inbox\"></i><p>Aucune commande exécutée récemment</p></div>';
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Aucune commande exécutée récemment</p></div>';
             return;
         }
         
         const html = history.map(item => `
-            <div class=\"history-item\">
-                <div class=\"history-badge ${item.action}\">
-                    <i class=\"fas ${getActionIcon(item.action)}\"></i>
+            <div class="history-item">
+                <div class="history-badge ${item.action}">
+                    <i class="fas ${getActionIcon(item.action)}"></i>
                 </div>
-                <div class=\"history-details\">
-                    <div class=\"history-action\">
+                <div class="history-details">
+                    <div class="history-action">
                         <strong>${item.action.toUpperCase()}</strong> ${escapeHtml(item.target)}
                     </div>
-                    <div class=\"history-info\">
+                    <div class="history-info">
                         Par ${escapeHtml(item.moderator)} • ${formatRelativeTime(item.timestamp)}
                         ${item.reason ? ` • ${escapeHtml(item.reason)}` : ''}
                     </div>
                 </div>
-                <div class=\"history-status success\">
-                    <i class=\"fas fa-check\"></i>
+                <div class="history-status success">
+                    <i class="fas fa-check"></i>
                 </div>
             </div>
         `).join('');
@@ -84,7 +84,7 @@ async function loadCommandHistory() {
     } catch (error) {
         console.error('Erreur chargement historique:', error);
         document.getElementById('command-history').innerHTML = 
-            '<div class=\"error-state\"><i class=\"fas fa-exclamation-circle\"></i><p>Erreur de chargement</p></div>';
+            '<div class="error-state"><i class="fas fa-exclamation-circle"></i><p>Erreur de chargement</p></div>';
     }
 }
 
@@ -176,7 +176,7 @@ function updateBotStatus(data) {
 // Modal Functions
 function openCommandModal(command) {
     if (!currentServer) {
-        showNotification('Veuillez d\\'abord sélectionner un serveur', 'warning');
+        showNotification('Veuillez d\'abord sélectionner un serveur', 'warning');
         return;
     }
     
@@ -221,7 +221,7 @@ function closeCommandModal() {
 
 function populateUserSelect() {
     const select = document.getElementById('modal-user');
-    select.innerHTML = '<option value=\"\">Sélectionner un utilisateur</option>';
+    select.innerHTML = '<option value="">Sélectionner un utilisateur</option>';
     
     users.forEach(user => {
         const option = document.createElement('option');
@@ -233,7 +233,7 @@ function populateUserSelect() {
 
 function populateChannelSelect() {
     const select = document.getElementById('modal-channel');
-    select.innerHTML = '<option value=\"\">Sélectionner un canal</option>';
+    select.innerHTML = '<option value="">Sélectionner un canal</option>';
     
     channels.forEach(channel => {
         const option = document.createElement('option');
@@ -272,7 +272,7 @@ async function executeCommand() {
     try {
         // Désactiver le bouton et afficher le loading
         executeBtn.disabled = true;
-        executeBtn.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Exécution...';
+        executeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exécution...';
         
         const formData = {
             command: document.getElementById('modal-command').value,
@@ -309,12 +309,12 @@ async function executeCommand() {
             closeCommandModal();
             setTimeout(() => loadCommandHistory(), 1000); // Actualiser l'historique
         } else {
-            throw new Error(result.message || 'Erreur lors de l\\'exécution');
+            throw new Error(result.message || 'Erreur lors de l\'exécution');
         }
         
     } catch (error) {
         console.error('Erreur exécution commande:', error);
-        showNotification(error.message || 'Erreur lors de l\\'exécution de la commande', 'error');
+        showNotification(error.message || 'Erreur lors de l\'exécution de la commande', 'error');
     } finally {
         executeBtn.disabled = false;
         executeBtn.innerHTML = originalContent;
@@ -364,7 +364,7 @@ function formatRelativeTime(timestamp) {
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
     
-    if (diffInSeconds < 60) return 'À l\\'instant';
+    if (diffInSeconds < 60) return 'À l\'instant';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
     return `${Math.floor(diffInSeconds / 86400)}j`;
