@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilisateurs - Discord Bot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern-style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fab fa-discord"></i>
+                    <span>BotPanel</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="/" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/commands" class="menu-item">
+                    <i class="fas fa-terminal"></i>
+                    <span>Commandes</span>
+                </a>
+                <a href="/users" class="menu-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+                <a href="/logs" class="menu-item">
+                    <i class="fas fa-history"></i>
+                    <span>Logs</span>
+                </a>
+                <a href="/settings" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="bot-status" id="bot-status">
+                    <div class="status-indicator offline">
+                        <div class="status-dot"></div>
+                    </div>
+                    <div class="status-info">
+                        <div class="status-text">Vérification...</div>
+                        <div class="status-detail">En attente</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Utilisateurs</h1>
+                <div class="header-actions">
+                    <button class="btn-primary" onclick="refreshUsers()">
+                        <i class="fas fa-sync-alt"></i>
+                        Actualiser
+                    </button>
+                </div>
+            </div>
+
+            <!-- Server Selection -->
+            <div class="command-section">
+                <h2>Sélection du Serveur</h2>
+                <div class="server-selector">
+                    <select id="server-select" onchange="loadServerUsers()">
+                        <option value="">Choisir un serveur...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Users List -->
+            <div class="command-section">
+                <h2>Liste des Utilisateurs</h2>
+                <div class="users-container">
+                    <div class="users-filters">
+                        <input type="text" id="search-users" placeholder="Rechercher un utilisateur..." oninput="filterUsers()">
+                        <select id="role-filter" onchange="filterUsers()">
+                            <option value="">Tous les rôles</option>
+                        </select>
+                        <select id="status-filter" onchange="filterUsers()">
+                            <option value="">Tous les statuts</option>
+                            <option value="online">En ligne</option>
+                            <option value="idle">Absent</option>
+                            <option value="dnd">Ne pas déranger</option>
+                            <option value="offline">Hors ligne</option>
+                        </select>
+                    </div>
+                    
+                    <div class="users-grid" id="users-grid">
+                        <div class="loading">Sélectionnez un serveur pour voir les utilisateurs</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Actions Modal -->
+            <div id="user-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="user-modal-title">Actions utilisateur</h3>
+                        <button class="modal-close" onclick="closeUserModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <div id="selected-user-info"></div>
+                        
+                        <div class="user-actions">
+                            <button class="action-btn mute" onclick="openActionModal('mute')">
+                                <i class="fas fa-volume-mute"></i>
+                                Mute
+                            </button>
+                            <button class="action-btn ban" onclick="openActionModal('ban')">
+                                <i class="fas fa-ban"></i>
+                                Ban
+                            </button>
+                            <button class="action-btn kick" onclick="openActionModal('kick')">
+                                <i class="fas fa-boot"></i>
+                                Kick
+                            </button>
+                            <button class="action-btn warn" onclick="openActionModal('warn')">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Warn
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='users.js') }}"></script>
+</body>
+</html>

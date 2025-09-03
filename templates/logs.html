@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs - Discord Bot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern-style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fab fa-discord"></i>
+                    <span>BotPanel</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="/" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/commands" class="menu-item">
+                    <i class="fas fa-terminal"></i>
+                    <span>Commandes</span>
+                </a>
+                <a href="/users" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+                <a href="/logs" class="menu-item active">
+                    <i class="fas fa-history"></i>
+                    <span>Logs</span>
+                </a>
+                <a href="/settings" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="bot-status" id="bot-status">
+                    <div class="status-indicator offline">
+                        <div class="status-dot"></div>
+                    </div>
+                    <div class="status-info">
+                        <div class="status-text">Vérification...</div>
+                        <div class="status-detail">En attente</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Logs de Modération</h1>
+                <div class="header-actions">
+                    <button class="btn-primary" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt"></i>
+                        Actualiser
+                    </button>
+                    <button class="btn-secondary" onclick="exportLogs()">
+                        <i class="fas fa-download"></i>
+                        Exporter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="logs-filters">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="server-filter">Serveur</label>
+                        <select id="server-filter" onchange="filterLogs()">
+                            <option value="">Tous les serveurs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="action-filter">Action</label>
+                        <select id="action-filter" onchange="filterLogs()">
+                            <option value="">Toutes les actions</option>
+                            <option value="mute">Mute</option>
+                            <option value="unmute">Unmute</option>
+                            <option value="ban">Ban</option>
+                            <option value="kick">Kick</option>
+                            <option value="warn">Warn</option>
+                            <option value="lock">Lock</option>
+                            <option value="unlock">Unlock</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="moderator-filter">Modérateur</label>
+                        <input type="text" id="moderator-filter" placeholder="Nom du modérateur..." oninput="filterLogs()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="target-filter">Cible</label>
+                        <input type="text" id="target-filter" placeholder="Utilisateur ciblé..." oninput="filterLogs()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="date-from">Date début</label>
+                        <input type="date" id="date-from" onchange="filterLogs()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="date-to">Date fin</label>
+                        <input type="date" id="date-to" onchange="filterLogs()">
+                    </div>
+                </div>
+                
+                <button class="btn-secondary" onclick="clearFilters()">
+                    <i class="fas fa-times"></i>
+                    Effacer les filtres
+                </button>
+            </div>
+
+            <!-- Logs Table -->
+            <div class="logs-table-container">
+                <div class="logs-stats">
+                    <span id="logs-count">0 logs</span>
+                    <span id="logs-filtered"></span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortLogs('timestamp')">
+                                    Date/Heure
+                                    <i class="fas fa-sort"></i>
+                                </th>
+                                <th onclick="sortLogs('action')">
+                                    Action
+                                    <i class="fas fa-sort"></i>
+                                </th>
+                                <th onclick="sortLogs('moderator')">
+                                    Modérateur
+                                    <i class="fas fa-sort"></i>
+                                </th>
+                                <th onclick="sortLogs('target')">
+                                    Cible
+                                    <i class="fas fa-sort"></i>
+                                </th>
+                                <th>Durée</th>
+                                <th>Raison</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-tbody">
+                            <tr class="loading-row">
+                                <td colspan="7">
+                                    <div class="loading">Chargement des logs...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Buttons will be generated by JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='logs.js') }}"></script>
+</body>
+</html>

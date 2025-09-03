@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - Discord Bot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern-style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fab fa-discord"></i>
+                    <span>BotPanel</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="/" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/commands" class="menu-item">
+                    <i class="fas fa-terminal"></i>
+                    <span>Commandes</span>
+                </a>
+                <a href="/users" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+                <a href="/logs" class="menu-item">
+                    <i class="fas fa-history"></i>
+                    <span>Logs</span>
+                </a>
+                <a href="/settings" class="menu-item active">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="bot-status" id="bot-status">
+                    <div class="status-indicator offline">
+                        <div class="status-dot"></div>
+                    </div>
+                    <div class="status-info">
+                        <div class="status-text">Vérification...</div>
+                        <div class="status-detail">En attente</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Paramètres</h1>
+                <div class="header-actions">
+                    <button class="btn-primary" onclick="saveSettings()">
+                        <i class="fas fa-save"></i>
+                        Enregistrer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bot Settings -->
+            <div class="settings-section">
+                <h2><i class="fas fa-robot"></i> Configuration du Bot</h2>
+                
+                <div class="settings-card">
+                    <div class="setting-item">
+                        <label for="bot-prefix">Préfixe des commandes</label>
+                        <input type="text" id="bot-prefix" value="+" maxlength="3">
+                        <small>Caractère(s) utilisé(s) pour déclencher les commandes</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="bot-status">Statut du bot</label>
+                        <select id="bot-status">
+                            <option value="online">En ligne</option>
+                            <option value="idle">Absent</option>
+                            <option value="dnd">Ne pas déranger</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="bot-activity">Activité du bot</label>
+                        <input type="text" id="bot-activity" placeholder="Ex: Surveille les serveurs">
+                        <small>Texte affiché sous le nom du bot</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moderation Settings -->
+            <div class="settings-section">
+                <h2><i class="fas fa-shield-alt"></i> Modération</h2>
+                
+                <div class="settings-card">
+                    <div class="setting-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="auto-mod" checked>
+                            <span class="checkmark"></span>
+                            Auto-modération activée
+                        </label>
+                        <small>Détection automatique des messages inappropriés</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="log-actions" checked>
+                            <span class="checkmark"></span>
+                            Enregistrer toutes les actions
+                        </label>
+                        <small>Sauvegarder les actions de modération dans la base de données</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="mute-role">Rôle de mute</label>
+                        <input type="text" id="mute-role" placeholder="Muted" value="Muted">
+                        <small>Nom du rôle utilisé pour les mutes</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="admin-role">Rôle administrateur</label>
+                        <input type="text" id="admin-role" placeholder="Admin" value="bot">
+                        <small>Rôle requis pour utiliser les commandes de modération</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Settings -->
+            <div class="settings-section">
+                <h2><i class="fas fa-desktop"></i> Interface Web</h2>
+                
+                <div class="settings-card">
+                    <div class="setting-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="web-enabled" checked>
+                            <span class="checkmark"></span>
+                            Interface web activée
+                        </label>
+                        <small>Permet l'accès au dashboard web</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="web-port">Port du serveur web</label>
+                        <input type="number" id="web-port" value="5000" min="1000" max="65535">
+                        <small>Port sur lequel le serveur web écoute</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="refresh-rate">Taux de rafraîchissement (secondes)</label>
+                        <input type="number" id="refresh-rate" value="30" min="10" max="300">
+                        <small>Fréquence d'actualisation automatique des données</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dark-theme" checked>
+                            <span class="checkmark"></span>
+                            Thème sombre
+                        </label>
+                        <small>Interface en mode sombre (recommandé)</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="settings-section">
+                <h2><i class="fas fa-lock"></i> Sécurité</h2>
+                
+                <div class="settings-card">
+                    <div class="setting-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="require-permissions" checked>
+                            <span class="checkmark"></span>
+                            Vérifier les permissions Discord
+                        </label>
+                        <small>S'assurer que l'utilisateur a les bonnes permissions avant d'exécuter une commande</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="max-warns">Nombre maximum d'avertissements</label>
+                        <input type="number" id="max-warns" value="3" min="1" max="10">
+                        <small>Nombre d'avertissements avant action automatique</small>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="auto-action">Action automatique après max avertissements</label>
+                        <select id="auto-action">
+                            <option value="none">Aucune</option>
+                            <option value="mute">Mute temporaire</option>
+                            <option value="kick">Expulsion</option>
+                            <option value="ban">Bannissement</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Info -->
+            <div class="settings-section">
+                <h2><i class="fas fa-info-circle"></i> Informations Système</h2>
+                
+                <div class="settings-card">
+                    <div class="system-info">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>Version du Bot:</strong>
+                                <span>2.0.0 Moderne</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Python:</strong>
+                                <span id="python-version">3.10+</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Discord.py:</strong>
+                                <span id="discordpy-version">2.3.2+</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Temps de fonctionnement:</strong>
+                                <span id="uptime">Calcul...</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Mémoire utilisée:</strong>
+                                <span id="memory-usage">Calcul...</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Serveurs connectés:</strong>
+                                <span id="guild-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="settings-section">
+                <h2><i class="fas fa-tools"></i> Actions</h2>
+                
+                <div class="settings-card">
+                    <div class="action-buttons">
+                        <button class="btn-warning" onclick="restartBot()">
+                            <i class="fas fa-redo"></i>
+                            Redémarrer le Bot
+                        </button>
+                        
+                        <button class="btn-info" onclick="testConnection()">
+                            <i class="fas fa-wifi"></i>
+                            Tester la Connexion
+                        </button>
+                        
+                        <button class="btn-secondary" onclick="exportSettings()">
+                            <i class="fas fa-download"></i>
+                            Exporter la Configuration
+                        </button>
+                        
+                        <button class="btn-danger" onclick="resetSettings()" style="margin-left: auto;">
+                            <i class="fas fa-trash-restore"></i>
+                            Réinitialiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
+</body>
+</html>
