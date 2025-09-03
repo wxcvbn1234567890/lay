@@ -113,9 +113,12 @@ def open_browser():
     except Exception as e:
         print(f"⚠️  Impossible d'ouvrir le navigateur: {e}")
 
-async def run_bot_async():
-    """Lance le bot en mode asynchrone"""
-    await run_discord_bot()
+def run_bot_sync():
+    """Lance le bot en mode synchrone"""
+    try:
+        main.start_bot()
+    except Exception as e:
+        print(f"❌ Erreur bot Discord: {e}")
 
 def main():
     """Fonction principale"""
@@ -138,7 +141,7 @@ def main():
     # Configurer le gestionnaire de signal
     signal.signal(signal.SIGINT, signal_handler)
     
-    print("\\n🎯 SERVICES DÉMARRÉS:")
+    print("\n🎯 SERVICES DÉMARRÉS:")
     print("-" * 35)
     
     # Démarrer le serveur web dans un thread
@@ -159,30 +162,30 @@ def main():
         print("🤖 Démarrage du bot Discord...")
         print("📝 Les logs apparaîtront sur l'interface web")
         print("🎮 Vous pouvez maintenant contrôler le bot depuis le site!")
-        print("\\n💡 Nouvelles fonctionnalités:")
+        print("\n💡 Nouvelles fonctionnalités:")
         print("  - Interface web moderne et responsive")
         print("  - Contrôle du bot directement depuis le site")
         print("  - Graphiques et statistiques en temps réel")
         print("  - Gestion des utilisateurs et des serveurs")
         print("  - Historique des commandes")
-        print("\\n🛑 Appuyez sur Ctrl+C pour arrêter\\n")
+        print("\n🛑 Appuyez sur Ctrl+C pour arrêter\n")
         
         try:
-            # Lancer le bot dans une boucle asynchrone
-            asyncio.run(run_bot_async())
+            # Lancer le bot
+            run_bot_sync()
         except KeyboardInterrupt:
-            print("\\n🛑 Arrêt des services...")
+            print("\n🛑 Arrêt des services...")
     else:
         print("⏸️  Bot Discord non démarré (token manquant)")
         print("📊 L'interface web reste accessible sur http://localhost:5000")
         print("🔧 Configurez votre token puis redémarrez")
-        print("\\n🛑 Appuyez sur Ctrl+C pour arrêter le serveur web\\n")
+        print("\n🛑 Appuyez sur Ctrl+C pour arrêter le serveur web\n")
         
         try:
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
-            print("\\n🛑 Arrêt du serveur web...")
+            print("\n🛑 Arrêt du serveur web...")
 
 if __name__ == "__main__":
     main()

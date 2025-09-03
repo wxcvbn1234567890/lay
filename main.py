@@ -359,8 +359,8 @@ async def execute_bot_command(guild_id, command_name, user_id=None, reason=None,
     except Exception as e:
         return False, f"Erreur: {str(e)}"
 
-async def start_bot():
-    """Démarre le bot de façon asynchrone"""
+def start_bot():
+    """Démarre le bot de façon synchrone"""
     global current_bot
     current_bot = bot
     try:
@@ -369,7 +369,7 @@ async def start_bot():
             print("❌ Impossible de démarrer le bot sans token")
             return False
         
-        await bot.start(token)
+        bot.run(token)
         return True
     except discord.HTTPException as e:
         if e.status == 429:

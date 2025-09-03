@@ -257,7 +257,7 @@ def api_execute_command():
             )
             loop.close()
         except Exception as e:
-            return jsonify({'success': False, 'message': f'Erreur d\\'exécution: {str(e)}'}), 500
+            return jsonify({'success': False, 'message': f'Erreur d\'exécution: {str(e)}'}), 500
         
         return jsonify({'success': success, 'message': message})
         
