@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logs de Modération Discord</title>
+    <title>Discord Bot Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,51 +11,94 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1><i class="fas fa-shield-alt"></i> Logs de Modération Discord</h1>
-            <div class="stats-grid" id="stats">
-                <div class="stat-card">
-                    <div class="stat-number" id="total-actions">-</div>
-                    <div class="stat-label">Actions totales</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="recent-activity">-</div>
-                    <div class="stat-label">Cette semaine</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="most-common">-</div>
-                    <div class="stat-label">Action la plus fréquente</div>
-                </div>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Discord Bot</div>
+                <div class="sidebar-subtitle">Monitor your bot management system</div>
             </div>
-        </header>
-
-        <main class="main-content">
-            <div class="controls">
-                <div class="filter-group">
-                    <label for="action-filter">Filtrer par action:</label>
-                    <select id="action-filter">
-                        <option value="">Toutes les actions</option>
-                        <option value="mute">Mute</option>
-                        <option value="unmute">Unmute</option>
-                        <option value="ban">Ban</option>
-                        <option value="kick">Kick</option>
-                        <option value="warn">Warn</option>
-                        <option value="lock">Lock</option>
-                        <option value="unlock">Unlock</option>
-                    </select>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Administration</div>
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Discord Events</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-history"></i>
+                        <span>Audit Logs</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
                 </div>
-                <div class="search-group">
-                    <label for="search-input">Rechercher:</label>
-                    <input type="text" id="search-input" placeholder="Nom d'utilisateur, modérateur ou raison...">
-                </div>
-                <button id="refresh-btn" class="refresh-btn">
-                    <i class="fas fa-sync-alt"></i> Actualiser
-                </button>
-            </div>
+            </nav>
+        </aside>
+        
+        <div class="main-wrapper">
+            <div class="container">
+                <header class="header">
+                    <h1>Dashboard</h1>
+                    <div class="header-subtitle">Monitor your Discord bot management system</div>
+                    <div class="stats-grid" id="stats">
+                        <div class="stat-card" id="bot-status-card">
+                            <div class="status-indicator" id="bot-status">
+                                <div class="status-dot"></div>
+                                <span id="status-text">Vérification...</span>
+                            </div>
+                            <div class="stat-label">Bot Status</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-actions">-</div>
+                            <div class="stat-label">Total Actions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="recent-activity">-</div>
+                            <div class="stat-label">This Week</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="most-common">-</div>
+                            <div class="stat-label">Most Common Action</div>
+                        </div>
+                    </div>
+                </header>
 
-            <div class="logs-container">
-                <div class="logs-grid" id="logs-grid">
+                <main class="main-content">
+                    <div class="controls">
+                        <div class="filter-group">
+                            <label for="action-filter">Filter by action:</label>
+                            <select id="action-filter">
+                                <option value="">All actions</option>
+                                <option value="mute">Mute</option>
+                                <option value="unmute">Unmute</option>
+                                <option value="ban">Ban</option>
+                                <option value="kick">Kick</option>
+                                <option value="warn">Warn</option>
+                                <option value="lock">Lock</option>
+                                <option value="unlock">Unlock</option>
+                            </select>
+                        </div>
+                        <div class="search-group">
+                            <label for="search-input">Search:</label>
+                            <input type="text" id="search-input" placeholder="Username, moderator or reason...">
+                        </div>
+                        <button id="refresh-btn" class="refresh-btn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="logs-container">
+                        <h3 style="color: #e2e8f0; margin-bottom: 20px; font-size: 1.25rem;">Recent Discord Events</h3>
+                        <div class="logs-grid" id="logs-grid">
                     {% for log in logs %}
                     <div class="log-card" data-action="{{ log.action }}" data-content="{{ log.moderator }} {{ log.target }} {{ log.reason or '' }}">
                         <div class="log-header">
@@ -106,14 +149,19 @@
                 </div>
             </div>
 
-            {% if not logs %}
-            <div class="empty-state">
-                <i class="fas fa-inbox"></i>
-                <h3>Aucun log disponible</h3>
-                <p>Les actions du bot apparaîtront ici une fois qu'il sera utilisé.</p>
+                        </div>
+                        
+                        {% if not logs %}
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No recent events</h3>
+                            <p>Bot actions will appear here once it's being used.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </main>
             </div>
-            {% endif %}
-        </main>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>

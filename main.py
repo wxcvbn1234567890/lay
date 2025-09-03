@@ -280,7 +280,7 @@ async def warn_user(ctx, member: discord.Member, *, reason: str = "Aucune raison
     except Exception as e:
         await ctx.send(f"Erreur lors de l'avertissement: {str(e)}")
 
-@bot.command(name='help')
+@bot.command(name='bothelp')
 async def help_command(ctx):
     """Affiche l'aide des commandes"""
     embed = discord.Embed(
@@ -297,7 +297,7 @@ async def help_command(ctx):
         ("+warn @user [raison]", "Avertir un utilisateur"),
         ("+lock [raison]", "Verrouiller le channel actuel"),
         ("+unlock [raison]", "Déverrouiller le channel actuel"),
-        ("+help", "Afficher cette aide")
+        ("+bothelp", "Afficher cette aide")
     ]
     
     for command, description in commands_list:

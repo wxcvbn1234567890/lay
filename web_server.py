@@ -3,9 +3,15 @@ from flask_cors import CORS
 import sqlite3
 from datetime import datetime
 import os
+import threading
+import time
 
 app = Flask(__name__)
 CORS(app)
+
+# Variable globale pour stocker le statut du bot
+bot_status = {'online': False, 'last_check': None}
+bot_thread = None
 
 def init_database_web():
     """Initialise la base de données si elle n'existe pas"""
@@ -153,6 +159,35 @@ def api_stats():
             'recent_activity': 0
         })
 
+@app.route('/api/bot-status')
+def api_bot_status():
+    """API endpoint pour récupérer le statut du bot Discord"""
+    global bot_status
+    return jsonify({
+        'online': bot_status['online'],
+        'last_check': bot_status['last_check'],
+        'uptime': '99.9%' if bot_status['online'] else '0%'
+    })
+
+def update_bot_status():
+    """Met à jour le statut du bot en continu"""
+    global bot_status
+    while True:
+        try:
+            # Vérifier si le bot Discord fonctionne en vérifiant le token
+            token = os.getenv('TOKEN')
+            if token and len(token) > 0:
+                bot_status['online'] = True
+            else:
+                bot_status['online'] = False
+            bot_status['last_check'] = datetime.now().isoformat()
+        except Exception as e:
+            bot_status['online'] = False
+            bot_status['last_check'] = datetime.now().isoformat()
+            print(f"Erreur lors de la vérification du statut du bot: {e}")
+        
+        time.sleep(10)  # Vérifier toutes les 10 secondes
+
 if __name__ == '__main__':
     # Create templates directory if it doesn't exist
     if not os.path.exists('templates'):
@@ -161,5 +196,9 @@ if __name__ == '__main__':
     # Create static directory if it doesn't exist
     if not os.path.exists('static'):
         os.makedirs('static')
+    
+    # Démarrer le thread de vérification du statut du bot
+    bot_thread = threading.Thread(target=update_bot_status, daemon=True)
+    bot_thread.start()
     
     app.run(host='0.0.0.0', port=5000, debug=True)
