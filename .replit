@@ -1,14 +1,14 @@
 entrypoint = "main.py"
-modules = ["python-3.11"]
+modules = ["python-3.10", "web", "nodejs-20", "nix"]
 
 hidden = [".pythonlibs"]
 
 [nix]
-channel = "stable-23_05"
+channel = "stable-25_05"
 
 [deployment]
-run = ["python", "main.py"]
-deploymentTarget = "gce"
+run = ["python", "launch.py"]
+deploymentTarget = "vm"
 ignorePorts = true
 
 [agent]
