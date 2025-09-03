@@ -15,7 +15,6 @@ from pathlib import Path
 
 # Import des modules personnalisés
 from config import get_discord_token
-import main
 
 def install_requirements():
     """Installe les dépendances requises"""
@@ -113,12 +112,16 @@ def open_browser():
     except Exception as e:
         print(f"⚠️  Impossible d'ouvrir le navigateur: {e}")
 
-def run_bot_sync():
-    """Lance le bot en mode synchrone"""
+def run_discord_bot():
+    """Lance le bot Discord"""
     try:
-        main.start_bot()
-    except Exception as e:
+        print("🤖 Démarrage du bot Discord...")
+        subprocess.run([sys.executable, 'main.py'], check=True)
+    except subprocess.CalledProcessError as e:
         print(f"❌ Erreur bot Discord: {e}")
+        print("💡 Vérifiez que le token est valide et que les intentions sont activées")
+    except KeyboardInterrupt:
+        print("🛑 Bot Discord arrêté")
 
 def main():
     """Fonction principale"""
@@ -171,8 +174,7 @@ def main():
         print("\n🛑 Appuyez sur Ctrl+C pour arrêter\n")
         
         try:
-            # Lancer le bot
-            run_bot_sync()
+            run_discord_bot()
         except KeyboardInterrupt:
             print("\n🛑 Arrêt des services...")
     else:

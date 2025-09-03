@@ -77,7 +77,7 @@ def run_discord_bot():
 def run_web_server():
     """Lance le serveur web"""
     try:
-        print("🌐 Démarrage du serveur web...")
+        print("🌐 Démarrage du serveur web moderne...")
         subprocess.run([sys.executable, 'web_server_new.py'], check=True)
     except subprocess.CalledProcessError as e:
         print(f"❌ Erreur serveur web: {e}")

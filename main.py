@@ -363,12 +363,12 @@ def start_bot():
     """Démarre le bot de façon synchrone"""
     global current_bot
     current_bot = bot
+    token = get_discord_token()
+    if not token:
+        print("❌ Impossible de démarrer le bot sans token")
+        return False
+    
     try:
-        token = get_discord_token()
-        if not token:
-            print("❌ Impossible de démarrer le bot sans token")
-            return False
-        
         bot.run(token)
         return True
     except discord.HTTPException as e:
@@ -384,6 +384,6 @@ def start_bot():
 # Run the bot
 if __name__ == "__main__":
     try:
-        asyncio.run(start_bot())
+        start_bot()
     except KeyboardInterrupt:
         print("Bot arrêté par l'utilisateur")
