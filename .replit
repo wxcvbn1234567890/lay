@@ -7,7 +7,7 @@ hidden = [".pythonlibs"]
 channel = "stable-25_05"
 
 [deployment]
-run = ["python", "launch.py"]
+run = ["python", "launch_new.py"]
 deploymentTarget = "vm"
 ignorePorts = true
 
@@ -24,19 +24,19 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Discord Bot & Web Server"
+args = "Modern Discord Bot & Dashboard"
 
 [[workflows.workflow]]
-name = "Discord Bot & Web Server"
+name = "Modern Discord Bot & Dashboard"
 author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python launch.py"
+args = "python launch_new.py"
 waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[ports]]
 localPort = 5000

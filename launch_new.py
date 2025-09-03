@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Script de lancement autonome pour le bot Discord + serveur web
-Compatible avec n'importe quel environnement Python
+Script de lancement moderne pour le bot Discord + serveur web
+Compatible avec tous les environnements Python
 """
 import subprocess
 import threading
@@ -10,8 +10,12 @@ import os
 import sys
 import signal
 import platform
-import webbrowser
+import asyncio
 from pathlib import Path
+
+# Import des modules personnalisés
+from config import get_discord_token
+import main
 
 def install_requirements():
     """Installe les dépendances requises"""
@@ -28,6 +32,7 @@ def install_requirements():
         import flask
         import flask_cors
         print("✅ Toutes les dépendances sont déjà installées")
+        return True
     except ImportError as e:
         print(f"⚠️  Dépendances manquantes détectées: {e}")
         print("📥 Installation des dépendances...")
@@ -45,34 +50,43 @@ def install_requirements():
 
 def check_token():
     """Vérifie si le token Discord est configuré"""
-    token = os.getenv('TOKEN')
+    token = get_discord_token()
     if not token:
         print("⚠️  TOKEN DISCORD MANQUANT!")
         print("=" * 50)
-        print("Pour que le bot fonctionne, vous devez:")
-        print("1. Créer une variable d'environnement TOKEN")
-        print("2. Ou modifier le fichier main.py ligne ~328")
-        print("3. Remplacer os.getenv('TOKEN') par votre token")
+        print("Pour que le bot fonctionne, vous devez configurer le token:")
         print("")
-        print("Exemple:")
-        print("  Windows: set TOKEN=votre_token_ici")
-        print("  Linux/Mac: export TOKEN=votre_token_ici")
+        print("🔧 MÉTHODES DE CONFIGURATION:")
+        print("1. Variable d'environnement:")
+        print("   Windows: set TOKEN=votre_token_ici")
+        print("   Linux/Mac: export TOKEN=votre_token_ici")
+        print("")
+        print("2. Fichier .env:")
+        print("   Créez un fichier .env avec: TOKEN=votre_token_ici")
+        print("")
+        print("3. Fichier bot_config.txt:")
+        print("   Créez un fichier bot_config.txt avec juste le token")
+        print("")
+        print("4. Sur Replit:")
+        print("   Ajoutez TOKEN dans les Secrets")
         print("=" * 50)
         return False
     
     print("✅ Token Discord configuré")
     return True
 
-def run_discord_bot():
-    """Lance le bot Discord"""
+async def run_discord_bot():
+    """Lance le bot Discord de façon asynchrone"""
     try:
         print("🤖 Démarrage du bot Discord...")
-        subprocess.run([sys.executable, 'main.py'], check=True)
-    except subprocess.CalledProcessError as e:
+        success = await main.start_bot()
+        if not success:
+            print("❌ Échec du démarrage du bot Discord")
+        return success
+    except Exception as e:
         print(f"❌ Erreur bot Discord: {e}")
         print("💡 Vérifiez que le token est valide et que les intentions sont activées")
-    except KeyboardInterrupt:
-        print("🛑 Bot Discord arrêté")
+        return False
 
 def run_web_server():
     """Lance le serveur web"""
@@ -86,26 +100,31 @@ def run_web_server():
 
 def signal_handler(sig, frame):
     """Gestionnaire pour arrêter proprement les services"""
-    print("\n🛑 Arrêt des services...")
+    print("\\n🛑 Arrêt des services...")
     sys.exit(0)
 
 def open_browser():
     """Ouvre automatiquement le navigateur"""
-    time.sleep(3)  # Attendre que le serveur démarre
+    time.sleep(3)
     try:
+        import webbrowser
         webbrowser.open('http://localhost:5000')
         print("🌐 Navigateur ouvert sur http://localhost:5000")
     except Exception as e:
         print(f"⚠️  Impossible d'ouvrir le navigateur: {e}")
 
+async def run_bot_async():
+    """Lance le bot en mode asynchrone"""
+    await run_discord_bot()
+
 def main():
     """Fonction principale"""
-    print("🚀 LANCEMENT DU BOT DISCORD + DASHBOARD")
-    print("=" * 50)
+    print("🚀 LANCEMENT DU BOT DISCORD + DASHBOARD MODERNE")
+    print("=" * 55)
     print(f"🖥️  Système: {platform.system()} {platform.release()}")
     print(f"🐍 Python: {sys.version.split()[0]}")
     print(f"📁 Répertoire: {Path.cwd()}")
-    print("=" * 50)
+    print("=" * 55)
     
     # Vérifier et installer les dépendances
     if not install_requirements():
@@ -113,14 +132,14 @@ def main():
         input("Appuyez sur Entrée pour quitter...")
         return
     
-    # Vérifier le token (optionnel pour le serveur web)
+    # Vérifier le token
     has_token = check_token()
     
     # Configurer le gestionnaire de signal
     signal.signal(signal.SIGINT, signal_handler)
     
-    print("\n🎯 SERVICES DÉMARRÉS:")
-    print("-" * 30)
+    print("\\n🎯 SERVICES DÉMARRÉS:")
+    print("-" * 35)
     
     # Démarrer le serveur web dans un thread
     web_thread = threading.Thread(target=run_web_server, daemon=True)
@@ -132,32 +151,38 @@ def main():
     
     time.sleep(2)
     print("✅ Serveur web: http://localhost:5000")
-    print("📊 Dashboard disponible dans votre navigateur")
-    print("-" * 30)
+    print("📊 Interface moderne disponible dans votre navigateur")
+    print("🎨 Design entièrement recodé avec fonctionnalités complètes")
+    print("-" * 35)
     
     if has_token:
         print("🤖 Démarrage du bot Discord...")
-        print("📝 Les logs apparaîtront sur le dashboard")
-        print("\n💡 Conseils:")
-        print("  - Activez les intentions privilégiées sur Discord Developer Portal")
-        print("  - Invitez le bot sur votre serveur avec les bonnes permissions")
-        print("  - Utilisez les commandes avec le préfixe +")
-        print("\n🛑 Appuyez sur Ctrl+C pour arrêter\n")
+        print("📝 Les logs apparaîtront sur l'interface web")
+        print("🎮 Vous pouvez maintenant contrôler le bot depuis le site!")
+        print("\\n💡 Nouvelles fonctionnalités:")
+        print("  - Interface web moderne et responsive")
+        print("  - Contrôle du bot directement depuis le site")
+        print("  - Graphiques et statistiques en temps réel")
+        print("  - Gestion des utilisateurs et des serveurs")
+        print("  - Historique des commandes")
+        print("\\n🛑 Appuyez sur Ctrl+C pour arrêter\\n")
         
         try:
-            run_discord_bot()
+            # Lancer le bot dans une boucle asynchrone
+            asyncio.run(run_bot_async())
         except KeyboardInterrupt:
-            print("\n🛑 Arrêt des services...")
+            print("\\n🛑 Arrêt des services...")
     else:
         print("⏸️  Bot Discord non démarré (token manquant)")
-        print("📊 Le dashboard reste accessible sur http://localhost:5000")
-        print("\n🛑 Appuyez sur Ctrl+C pour arrêter le serveur web\n")
+        print("📊 L'interface web reste accessible sur http://localhost:5000")
+        print("🔧 Configurez votre token puis redémarrez")
+        print("\\n🛑 Appuyez sur Ctrl+C pour arrêter le serveur web\\n")
         
         try:
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
-            print("\n🛑 Arrêt du serveur web...")
+            print("\\n🛑 Arrêt du serveur web...")
 
 if __name__ == "__main__":
     main()

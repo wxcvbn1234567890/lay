@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commandes - Discord Bot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern-style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fab fa-discord"></i>
+                    <span>BotPanel</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="/" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/commands" class="menu-item active">
+                    <i class="fas fa-terminal"></i>
+                    <span>Commandes</span>
+                </a>
+                <a href="/users" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+                <a href="/logs" class="menu-item">
+                    <i class="fas fa-history"></i>
+                    <span>Logs</span>
+                </a>
+                <a href="/settings" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="bot-status" id="bot-status">
+                    <div class="status-indicator offline">
+                        <div class="status-dot"></div>
+                    </div>
+                    <div class="status-info">
+                        <div class="status-text">Vérification...</div>
+                        <div class="status-detail">En attente</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Commandes</h1>
+                <div class="header-actions">
+                    <button class="btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i>
+                        Actualiser
+                    </button>
+                </div>
+            </div>
+
+            <!-- Server Selection -->
+            <div class="command-section">
+                <h2>Sélection du Serveur</h2>
+                <div class="server-selector">
+                    <select id="server-select" onchange="onServerSelect()">
+                        <option value="">Choisir un serveur...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Quick Commands -->
+            <div class="command-section">
+                <h2>Actions Rapides</h2>
+                <div class="quick-commands">
+                    <div class="command-card" data-command="mute">
+                        <div class="command-icon mute">
+                            <i class="fas fa-volume-mute"></i>
+                        </div>
+                        <div class="command-info">
+                            <h3>Mute</h3>
+                            <p>Rendre muet un utilisateur temporairement ou définitivement</p>
+                        </div>
+                        <button class="btn-command" onclick="openCommandModal('mute')">
+                            Utiliser
+                        </button>
+                    </div>
+
+                    <div class="command-card" data-command="ban">
+                        <div class="command-icon ban">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div class="command-info">
+                            <h3>Ban</h3>
+                            <p>Bannir un utilisateur du serveur</p>
+                        </div>
+                        <button class="btn-command" onclick="openCommandModal('ban')">
+                            Utiliser
+                        </button>
+                    </div>
+
+                    <div class="command-card" data-command="kick">
+                        <div class="command-icon kick">
+                            <i class="fas fa-boot"></i>
+                        </div>
+                        <div class="command-info">
+                            <h3>Kick</h3>
+                            <p>Expulser un utilisateur du serveur</p>
+                        </div>
+                        <button class="btn-command" onclick="openCommandModal('kick')">
+                            Utiliser
+                        </button>
+                    </div>
+
+                    <div class="command-card" data-command="warn">
+                        <div class="command-icon warn">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="command-info">
+                            <h3>Warn</h3>
+                            <p>Avertir un utilisateur</p>
+                        </div>
+                        <button class="btn-command" onclick="openCommandModal('warn')">
+                            Utiliser
+                        </button>
+                    </div>
+
+                    <div class="command-card" data-command="unmute">
+                        <div class="command-icon unmute">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                        <div class="command-info">
+                            <h3>Unmute</h3>
+                            <p>Redonner la parole à un utilisateur</p>
+                        </div>
+                        <button class="btn-command" onclick="openCommandModal('unmute')">
+                            Utiliser
+                        </button>
+                    </div>
+
+                    <div class="command-card" data-command="lock">
+                        <div class="command-icon lock">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="command-info">
+                            <h3>Lock</h3>
+                            <p>Verrouiller un canal</p>
+                        </div>
+                        <button class="btn-command" onclick="openCommandModal('lock')">
+                            Utiliser
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution History -->
+            <div class="command-section">
+                <h2>Historique des Commandes</h2>
+                <div class="command-history" id="command-history">
+                    <div class="loading">Chargement de l'historique...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Command Modal -->
+    <div id="command-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Exécuter une commande</h3>
+                <button class="modal-close" onclick="closeCommandModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="command-form">
+                    <input type="hidden" id="modal-command" />
+                    
+                    <div class="form-group">
+                        <label for="modal-server">Serveur</label>
+                        <select id="modal-server" required>
+                            <option value="">Sélectionner un serveur</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="user-group">
+                        <label for="modal-user">Utilisateur</label>
+                        <select id="modal-user">
+                            <option value="">Sélectionner un utilisateur</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="channel-group" style="display: none;">
+                        <label for="modal-channel">Canal</label>
+                        <select id="modal-channel">
+                            <option value="">Sélectionner un canal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="duration-group">
+                        <label for="modal-duration">Durée (optionnel)</label>
+                        <input type="text" id="modal-duration" placeholder="Ex: 1h, 30m, 1d...">
+                        <small>Formats: s (secondes), m (minutes), h (heures), d (jours)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-reason">Raison</label>
+                        <textarea id="modal-reason" placeholder="Raison de l'action..." rows="3"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeCommandModal()">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn-primary" id="execute-btn">
+                            <i class="fas fa-play"></i>
+                            Exécuter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <i id="notification-icon"></i>
+            <span id="notification-message"></span>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='commands.js') }}"></script>
+</body>
+</html>

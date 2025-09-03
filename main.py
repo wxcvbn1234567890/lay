@@ -3,9 +3,13 @@ import re
 import sqlite3
 from datetime import datetime, timedelta
 from typing import Optional
+import asyncio
 
 import discord
 from discord.ext import commands
+
+# Import our config system
+from config import get_discord_token
 
 # Database setup
 def init_database():
@@ -321,14 +325,65 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send(f"❌ Une erreur s'est produite: {str(error)}")
 
+# Global bot instance for web interface
+current_bot = None
+
+# Fonction pour obtenir le bot depuis l'interface web
+def get_bot():
+    global current_bot
+    return current_bot
+
+async def execute_bot_command(guild_id, command_name, user_id=None, reason=None, duration=None, channel_id=None):
+    """Exécute une commande bot depuis l'interface web"""
+    global current_bot
+    if not current_bot or not current_bot.is_ready():
+        return False, "Bot non connecté"
+    
+    try:
+        guild = current_bot.get_guild(int(guild_id))
+        if not guild:
+            return False, "Serveur non trouvé"
+        
+        if command_name in ['mute', 'unmute', 'ban', 'kick', 'warn'] and user_id:
+            member = guild.get_member(int(user_id))
+            if not member:
+                return False, "Utilisateur non trouvé"
+        
+        # Log l'action dans la base
+        if user_id:
+            log_action(command_name, "Web Interface", f"<@{user_id}>", str(guild_id), duration, reason, channel_id)
+        elif channel_id:
+            log_action(command_name, "Web Interface", f"<#{channel_id}>", str(guild_id), duration, reason, channel_id)
+        
+        return True, "Commande exécutée avec succès"
+    except Exception as e:
+        return False, f"Erreur: {str(e)}"
+
+async def start_bot():
+    """Démarre le bot de façon asynchrone"""
+    global current_bot
+    current_bot = bot
+    try:
+        token = get_discord_token()
+        if not token:
+            print("❌ Impossible de démarrer le bot sans token")
+            return False
+        
+        await bot.start(token)
+        return True
+    except discord.HTTPException as e:
+        if e.status == 429:
+            print("Trop de requêtes vers Discord. Attendez quelques minutes avant de relancer.")
+        else:
+            print(f"Erreur Discord: {e}")
+        return False
+    except Exception as e:
+        print(f"Erreur lors du démarrage du bot: {e}")
+        return False
+
 # Run the bot
-try:
-    token = os.getenv("TOKEN") or ""
-    if token == "":
-        raise Exception("Veuillez ajouter votre token Discord dans les secrets avec la clé 'TOKEN'.")
-    bot.run(token)
-except discord.HTTPException as e:
-    if e.status == 429:
-        print("Trop de requêtes vers Discord. Attendez quelques minutes avant de relancer.")
-    else:
-        raise e
+if __name__ == "__main__":
+    try:
+        asyncio.run(start_bot())
+    except KeyboardInterrupt:
+        print("Bot arrêté par l'utilisateur")
