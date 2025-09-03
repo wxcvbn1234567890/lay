@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs de Modération Discord</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-shield-alt"></i> Logs de Modération Discord</h1>
+            <div class="stats-grid" id="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-actions">-</div>
+                    <div class="stat-label">Actions totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="recent-activity">-</div>
+                    <div class="stat-label">Cette semaine</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="most-common">-</div>
+                    <div class="stat-label">Action la plus fréquente</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="controls">
+                <div class="filter-group">
+                    <label for="action-filter">Filtrer par action:</label>
+                    <select id="action-filter">
+                        <option value="">Toutes les actions</option>
+                        <option value="mute">Mute</option>
+                        <option value="unmute">Unmute</option>
+                        <option value="ban">Ban</option>
+                        <option value="kick">Kick</option>
+                        <option value="warn">Warn</option>
+                        <option value="lock">Lock</option>
+                        <option value="unlock">Unlock</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <label for="search-input">Rechercher:</label>
+                    <input type="text" id="search-input" placeholder="Nom d'utilisateur, modérateur ou raison...">
+                </div>
+                <button id="refresh-btn" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Actualiser
+                </button>
+            </div>
+
+            <div class="logs-container">
+                <div class="logs-grid" id="logs-grid">
+                    {% for log in logs %}
+                    <div class="log-card" data-action="{{ log.action }}" data-content="{{ log.moderator }} {{ log.target }} {{ log.reason or '' }}">
+                        <div class="log-header">
+                            <div class="action-badge action-{{ log.action }}">
+                                {% if log.action == 'mute' %}
+                                    <i class="fas fa-volume-mute"></i> Mute
+                                {% elif log.action == 'unmute' %}
+                                    <i class="fas fa-volume-up"></i> Unmute
+                                {% elif log.action == 'ban' %}
+                                    <i class="fas fa-ban"></i> Ban
+                                {% elif log.action == 'kick' %}
+                                    <i class="fas fa-boot"></i> Kick
+                                {% elif log.action == 'warn' %}
+                                    <i class="fas fa-exclamation-triangle"></i> Warn
+                                {% elif log.action == 'lock' %}
+                                    <i class="fas fa-lock"></i> Lock
+                                {% elif log.action == 'unlock' %}
+                                    <i class="fas fa-unlock"></i> Unlock
+                                {% endif %}
+                            </div>
+                            <div class="timestamp">{{ log.timestamp[:19].replace('T', ' ') }}</div>
+                        </div>
+                        
+                        <div class="log-content">
+                            <div class="log-row">
+                                <span class="label">Modérateur:</span>
+                                <span class="value">{{ log.moderator }}</span>
+                            </div>
+                            <div class="log-row">
+                                <span class="label">Cible:</span>
+                                <span class="value">{{ log.target }}</span>
+                            </div>
+                            {% if log.duration %}
+                            <div class="log-row">
+                                <span class="label">Durée:</span>
+                                <span class="value duration">{{ log.duration }}</span>
+                            </div>
+                            {% endif %}
+                            {% if log.reason %}
+                            <div class="log-row">
+                                <span class="label">Raison:</span>
+                                <span class="value reason">{{ log.reason }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if not logs %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>Aucun log disponible</h3>
+                <p>Les actions du bot apparaîtront ici une fois qu'il sera utilisé.</p>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
